@@ -23,12 +23,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center text-sm font-light text-gray-400">
+        <div className="border-t border-gray-200 pt-8 flex justify-between items-center text-sm font-light text-gray-400">
           <p>© {new Date().getFullYear()} {settings?.business_name}. All rights reserved.</p>
-          <div className="flex flex-col space-y-2 mt-4 md:mt-0 text-center md:text-left">
-            <Link to="/admin" className="hover:text-gray-900 transition-colors">Admin Access</Link>
-          </div>
-          
         </div>
       </div>
     </footer>
