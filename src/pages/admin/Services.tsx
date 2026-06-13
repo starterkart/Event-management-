@@ -141,8 +141,59 @@ export default function Services() {
                 <textarea required rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full border-gray-200 p-3 border focus:border-gray-900 focus:ring-0 outline-none transition-colors"></textarea>
               </div>
               <div>
-                <label className="block text-xs font-medium uppercase tracking-wider text-gray-500 mb-2">Image URL (Optional)</label>
-                <input type="url" value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} placeholder="https://..." className="w-full border-gray-200 p-3 border focus:border-gray-900 focus:ring-0 outline-none transition-colors" />
+                <label className="block text-xs font-medium uppercase tracking-wider text-gray-500 mb-2">Service Image</label>
+                <div className="flex items-center gap-4">
+                  {formData.image_url && (
+                    <img src={formData.image_url} alt="Preview" className="w-16 h-16 object-cover border border-gray-200" />
+                  )}
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+
+                      const reader = new FileReader();
+                      reader.onload = (event) => {
+                        const img = new Image();
+                        img.onload = () => {
+                          const canvas = document.createElement('canvas');
+                          const MAX_WIDTH = 800;
+                          const MAX_HEIGHT = 800;
+                          let width = img.width;
+                          let height = img.height;
+
+                          if (width > height) {
+                            if (width > MAX_WIDTH) {
+                              height *= MAX_WIDTH / width;
+                              width = MAX_WIDTH;
+                            }
+                          } else {
+                            if (height > MAX_HEIGHT) {
+                              width *= MAX_HEIGHT / height;
+                              height = MAX_HEIGHT;
+                            }
+                          }
+
+                          canvas.width = width;
+                          canvas.height = height;
+
+                          const ctx = canvas.getContext('2d');
+                          ctx?.drawImage(img, 0, 0, width, height);
+
+                          const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                          setFormData({ ...formData, image_url: dataUrl });
+                        };
+                        img.src = event.target?.result as string;
+                      };
+                      reader.readAsDataURL(file);
+                    }} 
+                    className="flex-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-gray-100 file:text-gray-900 hover:file:bg-gray-200 transition-colors cursor-pointer" 
+                  />
+                  {formData.image_url && (
+                    <button type="button" onClick={() => setFormData({...formData, image_url: ''})} className="text-sm font-medium text-red-500 hover:text-red-700">Clear</button>
+                  )}
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
